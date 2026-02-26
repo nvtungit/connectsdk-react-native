@@ -103,7 +103,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getName)
 
 - (instancetype)init
 {
-    [self moduleInitialize];
+    self = [super init];
+    if (self) {
+        [self moduleInitialize];
+    }
     return self;
 }
 
@@ -222,7 +225,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getName)
     [self setupDiscovery:config];
 }
 
-- (void) pickDevice:(NSDictionary*)command
+- (void) pickDevice:(NSArray*)command
            successCallback:(RCTResponseSenderBlock)successCallback
            errorCallback:(RCTResponseSenderBlock)errorCallback
 {
@@ -232,9 +235,9 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getName)
     _showPickerErrorCallback = errorCallback;
     
     BOOL popup = NO;
-    NSDictionary* options = command;
+    NSDictionary* options = ([command count] > 0 && [[command objectAtIndex:0] isKindOfClass:[NSDictionary class]]) ? [command objectAtIndex:0] : nil;
     
-    if (options.count > 1) {
+    if (options && options.count > 0) {
         NSString* format = options[@"format"];
         
         if (format && [format isEqualToString:@"full"]) {
@@ -464,7 +467,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getName)
     
     NSArray* array = dict ? @[event, dict] : @[event];
     @try {
-        [self sendEventWithName:@"deviceupdated" body:array];
+        // Emit event with correct name (ready, disconnect, capabilitieschanged, etc.)
+        // Also add the event name to supported events temporarily if needed
+        [self addSupportedEvent:event];
+        [self sendEventWithName:event body:array];
     } @catch (NSException *ex) {
         NSLog(@"exception while sendDeviceUpdate %@", ex);
     }

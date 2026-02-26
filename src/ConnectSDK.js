@@ -491,9 +491,7 @@ var DiscoveryManager = createClass(
         this.emit("error", error);
     },
 
-    this_setPairingLevel: function (pairingLevel, updateNow) { // changed name so patch fits
-        // (Just to align the replacement chunk properly)
-    },
+
     _setPairingLevel: function (pairingLevel, updateNow) {
         if (!pairingLevel || (Object.prototype.toString.call(pairingLevel) !== "[object String]")) {
             throw new TypeError("expected pairingLevel to be a string");
@@ -1251,7 +1249,6 @@ var LaunchSession = createClass(
 
     /** Close the app/media associated with this launch session. */
     close: function () {
-        return 
         return this._device._sendCommand("closeLaunchSession", {"launchSession": this._data}, false);
     },
 

@@ -113,3 +113,14 @@ static int nextObjectId = 0;
 }
 
 @end
+
+@implementation PowerControlWrapper
+
+- (instancetype)initWithModule:(ConnectSDKModule *)module
+                  powerControl:(id <PowerControl>)powerControl {
+    self = [super initWithModule:module];
+    _powerControl = powerControl;
+    return self;
+}
+
+@end

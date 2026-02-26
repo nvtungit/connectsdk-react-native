@@ -519,6 +519,7 @@ static id orNull (id obj)
     
     if (positionObj == nil) {
         [command sendErrorMessage:@"invalid position"];
+        return;
     }
     
     NSTimeInterval position = [positionObj doubleValue];
@@ -851,6 +852,7 @@ static id orNull (id obj)
     
     if (keyCodeObj == nil) {
         [command sendErrorMessage:@"invalid key code"];
+        return;
     }
     
     NSUInteger keyCode = [keyCodeObj unsignedIntegerValue];
@@ -1006,6 +1008,8 @@ static id orNull (id obj)
     WebOSTVService* service = (WebOSTVService*)[device serviceWithName:kConnectSDKWebOSTVServiceId];
     if (service) {
         [service powerOffWithSuccess:command.success failure:command.failure];
+    } else {
+        [command sendErrorMessage:@"PowerControl not available on this device (requires WebOS TV)"];
     }
 }
 
