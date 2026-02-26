@@ -426,6 +426,20 @@ var DiscoveryManager = createClass(
     constructor: function () {
         this._config = {};
         this._devices = {};
+
+        // Fix React Native bridging: Native emits global events via RCTEventEmitter
+        // Connect SDK JS used to rely on callbacks (Cordova pattern) which breaks in RN.
+        // We must intercept here and feed it into _handleDiscoveryUpdate.
+        var self = this;
+        eventEmitter.addListener('devicefound', function(device) {
+            self._handleDiscoveryUpdate(['devicefound', { device: device }]);
+        });
+        eventEmitter.addListener('deviceupdated', function(device) {
+            self._handleDiscoveryUpdate(['deviceupdated', { device: device }]);
+        });
+        eventEmitter.addListener('devicelost', function(device) {
+            self._handleDiscoveryUpdate(['devicelost', { device: device }]);
+        });
     },
 
     _getDeviceByDesc: function (desc) {
@@ -477,6 +491,9 @@ var DiscoveryManager = createClass(
         this.emit("error", error);
     },
 
+    this_setPairingLevel: function (pairingLevel, updateNow) { // changed name so patch fits
+        // (Just to align the replacement chunk properly)
+    },
     _setPairingLevel: function (pairingLevel, updateNow) {
         if (!pairingLevel || (Object.prototype.toString.call(pairingLevel) !== "[object String]")) {
             throw new TypeError("expected pairingLevel to be a string");
