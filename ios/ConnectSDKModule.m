@@ -20,9 +20,23 @@
 #import "ConnectSDKDispatcher.h"
 #import "ConnectSDKObjects.h"
 
-#import "ConnectSDK-Lite/AirPlayService.h"
-#import "ConnectSDK-Lite/CapabilityFilter.h"
-#import "ConnectSDK-Lite/DeviceServiceDelegate.h"
+#if __has_include(<ConnectSDK-Lite/AirPlayService.h>)
+#import <ConnectSDK-Lite/AirPlayService.h>
+#import <ConnectSDK-Lite/CapabilityFilter.h>
+#import <ConnectSDK-Lite/DeviceServiceDelegate.h>
+#elif __has_include(<ConnectSDK_Lite/AirPlayService.h>)
+#import <ConnectSDK_Lite/AirPlayService.h>
+#import <ConnectSDK_Lite/CapabilityFilter.h>
+#import <ConnectSDK_Lite/DeviceServiceDelegate.h>
+#elif __has_include(<ConnectSDK/AirPlayService.h>)
+#import <ConnectSDK/AirPlayService.h>
+#import <ConnectSDK/CapabilityFilter.h>
+#import <ConnectSDK/DeviceServiceDelegate.h>
+#else
+#import "AirPlayService.h"
+#import "CapabilityFilter.h"
+#import "DeviceServiceDelegate.h"
+#endif
 #pragma mark - Helper types
 
 @interface JSDeviceState : NSObject

@@ -22,4 +22,10 @@ Pod::Spec.new do |s|
   s.dependency 'React-Core'
   s.ios.dependency 'ConnectSDK-Lite'
   s.ios.dependency 'EventEmitter'
+
+  if defined?(install_modules_dependencies)
+    install_modules_dependencies(s)
+  else
+    s.dependency 'React-Core'
+  end
 end

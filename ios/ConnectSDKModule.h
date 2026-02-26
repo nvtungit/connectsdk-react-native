@@ -18,7 +18,17 @@
 //
 #ifndef ConnectSDKModule_h
 #define ConnectSDKModule_h
+
+#if __has_include(<ConnectSDK-Lite/ConnectSDK.h>)
 #import <ConnectSDK-Lite/ConnectSDK.h>
+#elif __has_include(<ConnectSDK_Lite/ConnectSDK.h>)
+#import <ConnectSDK_Lite/ConnectSDK.h>
+#elif __has_include(<ConnectSDK/ConnectSDK.h>)
+#import <ConnectSDK/ConnectSDK.h>
+#else
+#import "ConnectSDK.h"
+#endif
+
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTViewManager.h>

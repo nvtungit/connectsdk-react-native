@@ -19,7 +19,6 @@
 
 #import "ConnectSDKModule.h"
 #import "ConnectSDKDispatcher.h"
-#import <ConnectSDK-Lite/ConnectSDK.h>
 
 @interface JSObjectWrapper : NSObject
 @property (nonatomic, strong) ConnectSDKModule* module;

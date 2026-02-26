@@ -18,7 +18,6 @@
 //
 
 #import "ConnectSDKModule.h"
-#import <ConnectSDK-Lite/ConnectSDK.h>
 
 @class ConnectSDKModule;
 

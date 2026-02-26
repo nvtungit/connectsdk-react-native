@@ -18,9 +18,16 @@
 //
 
 #import "ConnectSDKModule.h"
-#import <ConnectSDK-Lite/ConnectSDK.h>
 #import <objc/message.h>
+#if __has_include(<ConnectSDK-Lite/WebOSTVService.h>)
 #import <ConnectSDK-Lite/WebOSTVService.h>
+#elif __has_include(<ConnectSDK_Lite/WebOSTVService.h>)
+#import <ConnectSDK_Lite/WebOSTVService.h>
+#elif __has_include(<ConnectSDK/WebOSTVService.h>)
+#import <ConnectSDK/WebOSTVService.h>
+#else
+#import "WebOSTVService.h"
+#endif
 #import "ConnectSDKDispatcher.h"
 #import "ConnectSDKObjects.h"
 
