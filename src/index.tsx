@@ -1,15 +1,20 @@
-// @ts-ignore
+// @ts-ignore — ConnectSDK.js is plain JavaScript without type declarations
 import * as SDK from './ConnectSDK';
 
-// Define the SDK Interfaces for code autocompletion
-export interface ServiceCommand {
-  success(callback: (...args: unknown[]) => void): ServiceCommand;
-  error(callback: (error: Error) => void): ServiceCommand;
-  complete(callback: (error: Error | null, ...args: unknown[]) => void): ServiceCommand;
-}
+// ============================================================
+//  Type Definitions — properly separated from runtime exports
+// ============================================================
 
-export interface CapabilityFilter {
-  capabilities: string[];
+/**
+ * ServiceCommand represents an async command sent to a device.
+ * Chain `.success()` / `.error()` / `.complete()` for callbacks.
+ */
+export interface ServiceCommand {
+  success(callback: (...args: any[]) => void): ServiceCommand;
+  error(callback: (error: Error) => void): ServiceCommand;
+  complete(
+    callback: (error: Error | null, ...args: any[]) => void
+  ): ServiceCommand;
 }
 
 export interface ChannelInfo {
@@ -25,24 +30,7 @@ export interface ExternalInputInfo {
   name: string;
 }
 
-export interface DiscoveryManager {
-  startDiscovery(config?: Record<string, unknown>): void;
-  stopDiscovery(): void;
-  pickDevice(options?: Record<string, unknown>, successCallback?: Function, errorCallback?: Function): DevicePicker;
-  on(event: string, callback: (...args: unknown[]) => void): void;
-  off(event: string, callback: (...args: unknown[]) => void): void;
-  addListener(event: string, callback: (...args: unknown[]) => void): void;
-  removeListener(event: string, callback: (...args: unknown[]) => void): void;
-  setCapabilityFilters(filters: CapabilityFilter[]): void;
-  setPairingLevel(pairingLevel: string): void;
-  setAirPlayServiceMode(mode: string): void;
-}
-
-export interface DevicePicker {
-  showPicker(): void;
-  close(): void;
-  on(event: string, callback: (error: Error | null, device: ConnectableDevice) => void): void;
-}
+// ── Capability Interfaces ──────────────────────────────────
 
 export interface TVControl {
   channelUp(): ServiceCommand;
@@ -101,13 +89,25 @@ export interface PowerControl {
 }
 
 export interface ToastControl {
-  showToast(message: string, options?: Record<string, unknown>): ServiceCommand;
-  showClickableToast(message: string, options?: Record<string, unknown>): ServiceCommand;
+  showToast(
+    message: string,
+    options?: Record<string, unknown>
+  ): ServiceCommand;
+  showClickableToast(
+    message: string,
+    options?: Record<string, unknown>
+  ): ServiceCommand;
 }
 
 export interface WebAppLauncher {
-  launchWebApp(webAppId: string, params?: Record<string, unknown>): ServiceCommand;
-  joinWebApp(webAppId: string, params?: Record<string, unknown>): ServiceCommand;
+  launchWebApp(
+    webAppId: string,
+    params?: Record<string, unknown>
+  ): ServiceCommand;
+  joinWebApp(
+    webAppId: string,
+    params?: Record<string, unknown>
+  ): ServiceCommand;
   closeWebApp(webAppId: string): ServiceCommand;
   pinWebApp(webAppId: string): ServiceCommand;
   unPinWebApp(webAppId: string): ServiceCommand;
@@ -116,7 +116,10 @@ export interface WebAppLauncher {
 }
 
 export interface Launcher {
-  launchApp(appId: string, params?: Record<string, unknown>): ServiceCommand;
+  launchApp(
+    appId: string,
+    params?: Record<string, unknown>
+  ): ServiceCommand;
   closeApp(appId: string): ServiceCommand;
   launchAppStore(appId: string): ServiceCommand;
   launchBrowser(url?: string): ServiceCommand;
@@ -139,30 +142,48 @@ export interface MediaControl {
 }
 
 export interface MediaPlayer {
-  displayImage(url: string, mimeType: string, options?: Record<string, unknown>): ServiceCommand;
-  playMedia(url: string, mimeType: string, options?: Record<string, unknown>): ServiceCommand;
+  displayImage(
+    url: string,
+    mimeType: string,
+    options?: Record<string, unknown>
+  ): ServiceCommand;
+  playMedia(
+    url: string,
+    mimeType: string,
+    options?: Record<string, unknown>
+  ): ServiceCommand;
 }
 
+// ── ConnectableDevice ──────────────────────────────────────
+
+/** A discovered device on the network (TV, Chromecast, etc.) */
 export interface ConnectableDevice {
+  // Connection
   connect(): void;
   disconnect(): void;
-  on(event: string, callback: (...args: unknown[]) => void): void;
-  off(event: string, callback: (...args: unknown[]) => void): void;
-  addListener(event: string, callback: (...args: unknown[]) => void): void;
-  removeListener(event: string, callback: (...args: unknown[]) => void): void;
-  setPairingType(pairingType: number): void;
   isReady(): boolean;
+
+  // Device info
   getId(): string;
   getFriendlyName(): string;
   getIPAddress(): string;
   getModelName(): string;
   getModelNumber(): string;
+
+  // Capabilities
   getCapabilities(): string[];
   hasCapability(cap: string): boolean;
   supports(...caps: string[]): boolean;
   supportsAny(...caps: string[]): boolean;
+
+  // Services
   hasService(serviceName: string): boolean;
   getService(serviceName: string): unknown | null;
+
+  // Pairing
+  setPairingType(pairingType: number): void;
+
+  // Capability getters — each returns an interface to control the device
   getMediaControl(): MediaControl;
   getMediaPlayer(): MediaPlayer;
   getTVControl(): TVControl;
@@ -175,21 +196,172 @@ export interface ConnectableDevice {
   getToastControl(): ToastControl;
   getWebAppLauncher(): WebAppLauncher;
   getLauncher(): Launcher;
+
+  // Events
+  on(event: 'ready', callback: () => void): void;
+  on(event: 'disconnect', callback: () => void): void;
+  on(event: 'capabilitieschanged', callback: () => void): void;
+  on(event: string, callback: (...args: any[]) => void): void;
+
+  off(event: string, callback: (...args: any[]) => void): void;
+  addListener(event: string, callback: (...args: any[]) => void): void;
+  removeListener(event: string, callback: (...args: any[]) => void): void;
 }
 
-export const discoveryManager = SDK.discoveryManager as unknown as DiscoveryManager;
-export const ConnectableDevice = SDK.ConnectableDevice as unknown as ConnectableDevice;
-export const DevicePicker = SDK.DevicePicker as unknown as DevicePicker;
-export const CapabilityFilter = SDK.CapabilityFilter as unknown as CapabilityFilter;
+// ── DevicePicker ───────────────────────────────────────────
 
-export const ConnectSDK = SDK.ConnectSDK as Record<string, unknown>;
-export const eventEmitter = SDK.eventEmitter as Record<string, unknown>;
-export const PairingLevel = SDK.PairingLevel as Record<string, unknown>;
-export const PairingType = SDK.PairingType as Record<string, unknown>;
-export const AirPlayServiceMode = SDK.AirPlayServiceMode as Record<string, unknown>;
-export const execute = SDK.execute as (...args: unknown[]) => unknown;
-export const Command = SDK.Command as Record<string, unknown>;
-export const Subscription = SDK.Subscription as Record<string, unknown>;
-export const LaunchSession = SDK.LaunchSession as Record<string, unknown>;
-export const Services = SDK.Services as Record<string, unknown>;
-export const KeyCodes = SDK.KeyCodes as Record<string, unknown>;
+export interface DevicePicker {
+  close(): void;
+  success(
+    callback: (device: ConnectableDevice) => void,
+    context?: unknown
+  ): DevicePicker;
+  error(callback: (error: Error) => void, context?: unknown): DevicePicker;
+  complete(
+    callback: (error: Error | null, device?: ConnectableDevice) => void,
+    context?: unknown
+  ): DevicePicker;
+  on(
+    event: 'success',
+    callback: (device: ConnectableDevice) => void
+  ): DevicePicker;
+  on(event: 'error', callback: (error: Error) => void): DevicePicker;
+  on(event: string, callback: (...args: any[]) => void): DevicePicker;
+}
+
+// ── DiscoveryManager ───────────────────────────────────────
+
+export interface DiscoveryManagerConfig {
+  pairingLevel?: 'on' | 'off';
+  airPlayServiceMode?: 'webapp' | 'media';
+  capabilityFilters?: string[][];
+}
+
+export interface DiscoveryManager {
+  startDiscovery(config?: DiscoveryManagerConfig): void;
+  stopDiscovery(): void;
+  setPairingLevel(pairingLevel: 'on' | 'off'): void;
+  setAirPlayServiceMode(mode: 'webapp' | 'media'): void;
+  setCapabilityFilters(filters: any[]): void;
+  getDeviceList(): ConnectableDevice[];
+
+  // Typed picker
+  pickDevice(
+    options?: Record<string, unknown>,
+    successCallback?: (device: ConnectableDevice) => void,
+    errorCallback?: (error: Error) => void
+  ): DevicePicker;
+
+  // Typed event overloads — THIS is what makes autocomplete work for callbacks
+  on(
+    event: 'devicefound',
+    callback: (device: ConnectableDevice) => void
+  ): void;
+  on(
+    event: 'devicelost',
+    callback: (device: ConnectableDevice) => void
+  ): void;
+  on(
+    event: 'deviceupdated',
+    callback: (device: ConnectableDevice) => void
+  ): void;
+  on(
+    event: 'devicelistchanged',
+    callback: (devices: ConnectableDevice[]) => void
+  ): void;
+  on(event: string, callback: (...args: any[]) => void): void;
+
+  off(event: string, callback: (...args: any[]) => void): void;
+  addListener(event: string, callback: (...args: any[]) => void): void;
+  removeListener(event: string, callback: (...args: any[]) => void): void;
+}
+
+// ── Constants ──────────────────────────────────────────────
+
+export interface PairingLevelConstants {
+  ON: 'on';
+  OFF: 'off';
+}
+
+export interface PairingTypeConstants {
+  NONE: 'NONE';
+  FIRST_SCREEN: 'FIRST_SCREEN';
+  PIN: 'PIN';
+  MIXED: 'MIXED';
+  AIRPLAY_MIRRORING: 'AIRPLAY_MIRRORING';
+}
+
+export interface AirPlayServiceModeConstants {
+  WEBAPP: 'webapp';
+  MEDIA: 'media';
+}
+
+export interface ServicesConstants {
+  Chromecast: 'Chromecast';
+  DIAL: 'DIAL';
+  DLNA: 'DLNA';
+  NetcastTV: 'NetcastTV';
+  Roku: 'Roku';
+  WebOSTV: 'webOS TV';
+  FireTV: 'FireTV';
+  AirPlay: 'AirPlay';
+}
+
+export interface KeyCodesConstants {
+  NUM_0: 0;
+  NUM_1: 1;
+  NUM_2: 2;
+  NUM_3: 3;
+  NUM_4: 4;
+  NUM_5: 5;
+  NUM_6: 6;
+  NUM_7: 7;
+  NUM_8: 8;
+  NUM_9: 9;
+  DASH: 10;
+  ENTER: 11;
+}
+
+// ============================================================
+//  Runtime Exports — properly typed instances
+// ============================================================
+
+/** Singleton DiscoveryManager — main entry point for device discovery */
+export const discoveryManager: DiscoveryManager =
+  SDK.discoveryManager as unknown as DiscoveryManager;
+
+/** Device pairing level constants */
+export const PairingLevel: PairingLevelConstants =
+  SDK.PairingLevel as unknown as PairingLevelConstants;
+
+/** Device pairing type constants */
+export const PairingType: PairingTypeConstants =
+  SDK.PairingType as unknown as PairingTypeConstants;
+
+/** AirPlay service mode constants */
+export const AirPlayServiceMode: AirPlayServiceModeConstants =
+  SDK.AirPlayServiceMode as unknown as AirPlayServiceModeConstants;
+
+/** Device service name constants */
+export const Services: ServicesConstants =
+  SDK.Services as unknown as ServicesConstants;
+
+/** TV remote key code constants */
+export const KeyCodes: KeyCodesConstants =
+  SDK.KeyCodes as unknown as KeyCodesConstants;
+
+/** Low-level execute function (advanced use only) */
+export const execute = SDK.execute as (
+  action: string,
+  args: string,
+  success: (...args: any[]) => void,
+  error: (...args: any[]) => void
+) => void;
+
+/** Native event emitter reference (advanced use only) */
+export const eventEmitter = SDK.eventEmitter;
+
+/** CapabilityFilter constructor */
+export const CapabilityFilter = SDK.CapabilityFilter as unknown as new (
+  capabilities: string[]
+) => { getCapabilities(): string[] };

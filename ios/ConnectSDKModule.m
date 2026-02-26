@@ -686,15 +686,7 @@ static id orNull (id obj)
 - (void) connectableDevice:(ConnectableDevice *)device service:(DeviceService *)service pairingRequiredOfType:(int)pairingType withData:(id)pairingData
 {
     NSDictionary* pairingInfo = nil;
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Mirroring Required" message:@"Enable AirPlay mirroring to connect to this device" preferredStyle:UIAlertControllerStyleAlert];
-    id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action){
-        if (device) { [device disconnect]; }
-    }];
-        
-    [alertController addAction:okAction];
-    [alertController addAction:cancelAction];
+
     switch (pairingType) {
         case DeviceServicePairingTypeFirstScreen:
             pairingInfo = @{@"pairingType": @"firstScreen"};
@@ -709,11 +701,11 @@ static id orNull (id obj)
             pairingInfo = @{@"pairingType": @"mixed"};
             break;
         case DeviceServicePairingTypeAirPlayMirroring:
-            [rootViewController presentViewController:alertController animated:YES completion:nil];
             pairingInfo = @{@"pairingType": @"airPlayMirroring"};
             break;
     }
     
+    // Emit event to JS layer — let the React Native app handle UI
     [self sendServiceUpdate:@"servicepairingrequired" device:device service:service withData:pairingInfo];
 }
 

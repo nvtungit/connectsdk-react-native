@@ -53,5 +53,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app needs access to your local network to discover and connect to smart TVs and media devices.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_airplay._tcp</string>
+		<string>_raop._tcp</string>
+		<string>_googlecast._tcp</string>
+		<string>_dial._tcp</string>
+		<string>_http._tcp</string>
+	</array>
 </dict>
 </plist>
