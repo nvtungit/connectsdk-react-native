@@ -125,7 +125,6 @@ public class DiscoveryManagerWrapper extends ReactContextBaseJavaModule implemen
         }
     }
 
-    @ReactMethod
     void startDiscovery(ReadableMap mapArgs, final Callback Callback) throws JSONException {
         JSONObject args = ConnectSDKModule.convertMapToJson(mapArgs);
 
@@ -137,7 +136,6 @@ public class DiscoveryManagerWrapper extends ReactContextBaseJavaModule implemen
         start();
     }
 
-    @ReactMethod
     void stopDiscovery(JSONArray args, final Callback Callback) throws JSONException {
         stop();
         module.success(Callback);

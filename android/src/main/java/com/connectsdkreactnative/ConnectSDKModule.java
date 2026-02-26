@@ -47,7 +47,6 @@ import java.util.Objects;
 public class ConnectSDKModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     private static final String LOG_TAG = "ConnectSDKModule";
     private final ReactApplicationContext mCtx;
-    @ReactMethod
     public ConnectSDKModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addLifecycleEventListener(this);
@@ -233,7 +232,6 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
         }
     }
 
-    @ReactMethod
     void startDiscovery(String mapArgs, final Callback Callback) throws JSONException {
         JSONArray args = new JSONArray(mapArgs);
         initDiscoveryManagerWrapper();
