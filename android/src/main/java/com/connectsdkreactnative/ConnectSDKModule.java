@@ -144,7 +144,7 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public boolean execute(String action, String arrArgs, Callback successCallback, Callback errorCallback) throws JSONException {
+    public void execute(String action, String arrArgs, Callback successCallback, Callback errorCallback) throws JSONException {
         try {
             JSONArray args = new JSONArray(arrArgs);
             Log.w(LOG_TAG, "execute" + arrArgs);
@@ -158,7 +158,7 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
                 JSONObject methodArgs = args.getJSONObject(4);
                 boolean subscribe = args.getBoolean(5);
                 deviceWrapper.sendCommand(commandId, ifaceName, methodName, methodArgs, subscribe, successCallback, errorCallback);
-                return true;
+                return;
             } else if ("cancelCommand".equals(action)) {
                 ConnectableDeviceWrapper deviceWrapper = getDeviceWrapper(args.getString(0));
                 String commandId = args.getString(1);
@@ -166,37 +166,37 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
                 deviceWrapper.cancelCommand(commandId);
                 success(successCallback);
 
-                return true;
+                return;
             } else if ("startDiscovery".equals(action)) {
                 startDiscovery(arrArgs, successCallback);
-                return true;
+                return;
             } else if ("stopDiscovery".equals(action)) {
                 stopDiscovery(successCallback);
-                return true;
+                return;
             } else if ("setDiscoveryConfig".equals(action)) {
                 setDiscoveryConfig(args, successCallback);
-                return true;
+                return;
             } else if ("pickDevice".equals(action)) {
                 pickDevice(args, successCallback);
-                return true;
+                return;
             } else if ("setDeviceListener".equals(action)) {
                 ConnectableDeviceWrapper deviceWrapper = getDeviceWrapper(args.getString(0));
                 deviceWrapper.setCallbackContext(successCallback, errorCallback);
-                return true;
+                return;
             } else if ("connectDevice".equals(action)) {
                 ConnectableDeviceWrapper deviceWrapper = getDeviceWrapper(args.getString(0));
                 deviceWrapper.setCallbackContext(successCallback, errorCallback);
                 deviceWrapper.connect();
-                return true;
+                return;
             } else if ("setPairingType".equals(action)) {
                 ConnectableDeviceWrapper deviceWrapper = getDeviceWrapper(args.getString(0));
                 deviceWrapper.setCallbackContext(successCallback, errorCallback);
                 deviceWrapper.setPairingType(getPairingTypeFromString(args.getString(1)));
-                return true;
+                return;
             } else if ("disconnectDevice".equals(action)) {
                 ConnectableDeviceWrapper deviceWrapper = getDeviceWrapper(args.getString(0));
                 deviceWrapper.disconnect();
-                return true;
+                return;
             } else if ("acquireWrappedObject".equals(action)) {
                 String objectId = args.getString(0);
                 JSObjectWrapper wrapper = objectWrappers.get(objectId);
@@ -210,19 +210,18 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
                     removeObjectWrapper(wrapper);
                 }
 
-                return true;
+                return;
             }
         } catch (NoSuchDeviceException e) {
             error(errorCallback, "no such device");
-            return true;
+            return;
         } catch (JSONException e) {
             Log.d(LOG_TAG, "exception while handling " + action, e);
             error(errorCallback, e.toString());
-            return true;
+            return;
         }
 
         Log.w(LOG_TAG, "no handler for exec action " + action);
-        return false;
     }
 
     void initDiscoveryManagerWrapper() {
