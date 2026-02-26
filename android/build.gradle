@@ -52,11 +52,16 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }
+    // Nimbus DS repository for srp6a-android (removed from Maven Central)
+    maven { url "https://build.nimbus-ds.com/repository/maven-public/" }
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation 'com.github.ConnectSDK:Connect-SDK-Android-Lite:b25566a3c1'
+    implementation ('com.github.ConnectSDK:Connect-SDK-Android-Lite:b25566a3c1') {
+        // srp6a-android was only for WebOS SRP6 pairing — JCenter shutdown in 2022, unavailable
+        exclude group: 'com.nimbusds', module: 'srp6a-android'
+    }
     implementation 'com.google.code.gson:gson:2.8.6'
 }
