@@ -201,7 +201,7 @@ public class ConnectSDKModule extends ReactContextBaseJavaModule implements Life
                 String objectId = args.getString(0);
                 JSObjectWrapper wrapper = objectWrappers.get(objectId);
 
-                return true;
+                return;
             } else if ("releaseWrappedObject".equals(action)) {
                 String objectId = args.getString(0);
                 JSObjectWrapper wrapper = objectWrappers.get(objectId);
